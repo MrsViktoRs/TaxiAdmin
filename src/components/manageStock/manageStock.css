@@ -153,3 +153,9 @@ input:checked + .slider:before {
         margin-left: 70%;
     }
 }
+
+.loadingMess {
+    font-size: 200%;
+    margin-top: 300px;
+    text-align: center;
+}

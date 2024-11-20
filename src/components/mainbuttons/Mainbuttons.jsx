@@ -1,40 +1,18 @@
 import React from "react";
 import './mainbuttons.css'
 
-export default function Mainbuttons() {
+export default function Mainbuttons({ onClick }) {
+
+    
+
     return (
         <div className="navMenu">
-            <button className="navMenuBtn" id="orderView">Заявки</button>
-            <button className="navMenuBtn" id="manageStockView">Управление акциями</button>
-            <button className="navMenuBtn" id="referalKeysView">Реферальные ключи</button>
-            <button className="navMenuBtn" id="comunicationView">Комуникации</button>
-            <button className="navMenuBtn" id="ordersAndMessageView">Заявки и обращения</button>
-            <button className="navMenuBtn" id="reportView">Отчёт</button>
+            <button className="navMenuBtn" id="orderView" onClick={() => onClick('orderView')}>Заявки</button>
+            <button className="navMenuBtn" id="manageStockView" onClick={() => onClick('manageStockView')}>Управление акциями</button>
+            <button className="navMenuBtn" id="referalKeysView" onClick={() => onClick('referalKeysView')}>Реферальные ключи</button>
+            <button className="navMenuBtn" id="comunicationView" onClick={() => onClick('comunicationView')}>Комуникации</button>
+            <button className="navMenuBtn" id="ordersAndMessageView" onClick={() => onClick('ordersAndMessageView')}>Заявки и обращения</button>
+            <button className="navMenuBtn" id="reportView" onClick={() => onClick('reportView')}>Отчёт</button>
         </div>
-        // <>
-        //     <div className="bb">
-        //         <nav className="Buttons">
-        //             <button className="navMenuBtn">
-        //                 <span className="navMenuText">Заявки</span>
-        //             </button>
-        //             <button className="navMenuBtn">
-        //                 <span className="navMenuText">Управление акциями</span>
-        //             </button>
-        //             <button className="navMenuBtn">
-        //                 <span className="navMenuText">Реферальные ключи</span>
-        //             </button>
-        //             <button className="navMenuBtn">
-        //                 <span className="navMenuText">Коммуникации</span>
-        //             </button>
-        //             <button className="navMenuBtn">
-        //                 <span className="navMenuText">Заявки и обращение</span>
-        //             </button>
-        //             <button className="navMenuBtn">
-        //                 <span className="navMenuText">Отчеты</span>
-        //             </button> 
-        //         </nav>
-        //     </div>
-        //     <div className="line"></div>
-        // </>
     )
 }

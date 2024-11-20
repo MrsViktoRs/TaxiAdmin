@@ -4,8 +4,8 @@
     display: block;
     max-width: 804px;
     max-height: 952px;
-    width: 804px;
-    height: 952px;
+    width: 504px;
+    height: 652px;
     margin: auto;
     margin-top: 169px;
     padding: 32px;
@@ -26,7 +26,7 @@
 .form_label_login {
     position: absolute;
     margin-top: -30px;
-    left: 370px;
+    left: 220px;
     margin-bottom: 20px;
     color: grey;
     background-color: #B7D3D4;
@@ -34,10 +34,10 @@
 
 .form_input_login {
     width: 58%;
-    height: 60px;
+    height: 40px;
     margin-left: 21%;
     margin-top: 0px;
-    font-size: 200%;
+    font-size: 24px;
     padding: 5px 0px 10px 5px;
     border:  none;
     border-radius: 20px;
@@ -62,7 +62,7 @@
 .form_label_pass {
     position: absolute ;
     margin-top: -30px;
-    left: 365px;
+    left: 215px;
     margin-bottom: 20px;
     color: grey;
     background-color: #B7D3D4;
@@ -70,10 +70,10 @@
 
 .form_input_pass {
     width: 58%;
-    height: 60px;
+    height: 40px;
     margin-left: 21%;
     margin-top: 0px;
-    font-size: 200%;
+    font-size: 24px;
     padding: 5px 0px 10px 5px;
     border:  none;
     border-radius: 20px;
@@ -88,7 +88,7 @@
 }
 
 .form_button { 
-    margin-top: 175px;
+    margin-top: 130px;
     margin-left: 21%;
     letter-spacing: 1px;
     height: 80px;

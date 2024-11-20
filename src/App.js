@@ -1,22 +1,36 @@
+import React, {useState} from "react";
+import axios from 'axios';
+
 import './App.css';
-import Headadmin from './/components/headadmin/Headadmin.jsx'
-// import Authorization from './/components/authorization/Authorization.jsx'
-import ManageStock from './components/manageStock/ManageStock.jsx';
-import Mainbuttons from './/components/mainbuttons/Mainbuttons.jsx';
-import Referalkeys from './components/referalkeys/Referalkeys.jsx';
-import Orders from './components/orders/Orders.jsx';
-import Comunications from './components/comunications/Comunications.jsx';
+import Authorization from './/components/authorization/Authorization.jsx';
+import AdminPanel from './components/adminPanel/AdminPanel.jsx';
 
 function App() {
+  const [isLonIn, setIsLogIn] = useState(false);
+
+  const handleLogIn = () => {
+    setIsLogIn(true);
+  }
+  
+  function renderComponent() {
+    if (isLonIn) {
+      return (
+        <>
+        <AdminPanel />
+        </>
+      )
+    } else {
+      return (
+        <>
+        <Authorization logIn={handleLogIn}/>
+        </>
+      )
+    }
+  }
+
   return (
     <div className="App">
-      <Headadmin/>
-      <Mainbuttons/>
-      {/* <Authorization/> */}
-      {/* <ManageStock /> */}
-      {/* <Referalkeys /> */}
-      <Orders />
-      {/* <Comunications /> */}
+      {renderComponent()}
     </div>
   );
 }

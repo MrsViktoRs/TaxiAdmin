@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useLayoutEffect } from "react";
 import axios from 'axios';
 import './manageStock.css';
 
@@ -6,16 +6,15 @@ export default function ManageStock() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [switchStates, setSwitchStates] = useState(true);
-    const [data, setData] = useState('');
-    const [text, setText] = useState('');
+    const [data, setData] = useState([]);
+    const [text, setText] = useState();
     const [selectElem, setSelectElem] = useState(null);
     const [stockId, setStockId] = useState(1);
 
-    const fetchOrders = async () => {
+    const fetchStock = async () => {
         try {
             const response = await axios.get(`http://127.0.0.1:8000/api/v1/stocks/`);
-            setData(response.data)
-            console.log(response)
+            setData(response.data);
         } catch (err) {
             setError(err);
             console.log(error);
@@ -30,7 +29,7 @@ export default function ManageStock() {
             const response = await axios.put(`http://127.0.0.1:8000/api/v1/stocks/${stockId}/`, 
                 param
             );
-            await fetchOrders();
+            await fetchStock();
             console.log('Данные обновлены:', response.data);
         } catch (error) {
             console.error('Ошибка обновления данных:', error);
@@ -58,19 +57,21 @@ export default function ManageStock() {
 
     const handleButtonClick = (id) => {
         const stock = data.find((item, index) => item.id === id);
-    
+        console.log(stock)
         if (stock) {
             setSelectElem(stock)
             setStockId(stock.id);
             if (stock.status) {
                 setText(stock.on_text);
                 setSwitchStates(stock.status)
+                console.log(`Text ${text}`)
             }
             else {
                 setText(stock.off_text);
                 setSwitchStates(stock.status)
             }
             console.log(`Акция ${stock.id}`)
+            console.log(`Text ${text}`)
         } else {
             console.error(`Акция с id ${id} не найдена`);
         }
@@ -88,15 +89,23 @@ export default function ManageStock() {
         }
     }
 
-    useEffect(() => {
-        fetchOrders();
-    }, []);
+    useLayoutEffect(() => {
+        if (loading) {
+            fetchStock();
+        } else {
+            handleButtonClick(1);
+        }
+    }, [data]);
+
+    if (loading) {
+        return <p className="loadingMess">Загрузка данных...</p>
+    }
 
     return (
         <div className="manageStock">
-            <label class="switchStock">
-                <input type="checkbox" checked={switchStates} onClick={handleSwichClick}/>
-                <span class="slider round"></span>
+            <label className="switchStock">
+                <input type="checkbox" checked={switchStates} onClick={handleSwichClick} onChange={(e) => setSwitchStates(e.target.checked)}/>
+                <span className="slider round"></span>
             </label>
             <div className="viewStock">
                 <button className="viewBtnStock" onClick={() => handleButtonClick(1)} style={{backgroundColor: stockId === 1 ? '#506365' : '#7A9E9F'}}>Акция 1</button>
