@@ -1,12 +1,47 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import axios from 'axios';
 import './orders.css';
 
 export default function Orders () {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [selectedView, setSelectedView] = useState(1);
+
+    const token = '4cf38a3d-abd3-4007-8e02-6cdc93c329a1';
+
+
+    const fetchOrders = async () => {
+        try {
+            const params = {
+                direction: ['taxi'], // Направления регистрации
+                search: 'Иванов Иван Иванович',     // Поиск по ФИО и телефону
+                status: ['draft', 'not_filled'],    // Статусы заявок
+                page: 1,                            // Текущая страница
+                per_page: '20',                     // Количество элементов на странице
+                order: '-date'                      // Сортировка по дате создания (по убыванию)
+              };
+            
+            const headers = {
+                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1' // заголовок с клиентским ключом
+              };
+
+            const response = await axios.get(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications`, {params, headers});
+            console.log(response.data);
+        } catch (err) {
+            setError(err);
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleClickView = (view) => {
         setSelectedView(view)
     }
+
+    useEffect(() => {
+        fetchOrders();
+    }, []);
 
     return (
         <div className="orders">

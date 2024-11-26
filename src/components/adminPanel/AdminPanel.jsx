@@ -7,6 +7,8 @@ import ManageStock from '../manageStock/ManageStock.jsx';
 import Referalkeys from '../referalkeys/Referalkeys.jsx';
 import Orders from '../orders/Orders.jsx';
 import Comunications from '../comunications/Comunications.jsx';
+import OrdersMessage from '../ordersMessage/OrdersMessage.jsx';
+import Reports from "../reports/Reports.jsx";
 import './adminPanel.css'
 
 export default function AdminPanel() {
@@ -56,6 +58,7 @@ export default function AdminPanel() {
                 <>
                 <Headadmin />
                 <Mainbuttons onClick={handleViewClick}/>
+                <OrdersMessage />
                 </>
                 )
             case 'reportView':
@@ -63,6 +66,7 @@ export default function AdminPanel() {
                 <>
                 <Headadmin />
                 <Mainbuttons onClick={handleViewClick}/>
+                <Reports />
                 </>
                 )
             default:
