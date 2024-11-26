@@ -4,6 +4,7 @@ import './ordersMessage.css';
 
 export default function OrdersMessage() {
     const [selectView, setSelectView] = useState('order');
+    const [history, setHistory] = useState(false);
     const [data, setData] = useState([]);
 
     const arData = {
@@ -74,38 +75,42 @@ export default function OrdersMessage() {
                 status: true,
             }
         ],
-        help: [
-            {
-                message: 'Потерялся в лесу, не хотел... так получилось... ПОМОГИТЕ!!!',
-                user: 'Ив Ин Ич',
-                dt: {
-                    date: '12.12.2022',
-                    time: '12:12'
-                },
-                status: true,
-            },
-            {
-                message: 'Писать не буду больше, слишком это тяжело',
-                user: 'Ива Ива Ива',
-                dt: {
-                    date: '12.12.2022',
-                    time: '12:12'
-                },
-                status: true,
-            }
-        ]
+        // help: [
+        //     {
+        //         message: 'Потерялся в лесу, не хотел... так получилось... ПОМОГИТЕ!!!',
+        //         user: 'Ив Ин Ич',
+        //         dt: {
+        //             date: '12.12.2022',
+        //             time: '12:12'
+        //         },
+        //         status: true,
+        //     },
+        //     {
+        //         message: 'Писать не буду больше, слишком это тяжело',
+        //         user: 'Ива Ива Ива',
+        //         dt: {
+        //             date: '12.12.2022',
+        //             time: '12:12'
+        //         },
+        //         status: true,
+        //     }
+        // ]
     }
 
     const handleViewClick = (view) => {
         setSelectView(view);
     }
 
-    function renderComponent(mode) {
+    const handleHistoryClick = () => {
+        setHistory(!history);
+    }
+
+    function renderData(mode) {
         const items = arData[mode]; // Получаем данные для текущего режима
     
         if (!items) {
             return (
-                <div>Данные не найдены</div>
+                <div className="noData">Данные отсутствуют...</div>
             )
         }
     
@@ -113,8 +118,26 @@ export default function OrdersMessage() {
             <div className="row" key={index}>
                 <div className="message">{item.message}</div>
                 <div className="user">{item.user}</div>
-                <div className="dt">{item.dt.time} {item.dt.date}</div>
+                <div className="dt">{item.dt.time} || {item.dt.date}</div>
                 <button className="closeNote">Закр. заявку</button>
+            </div>
+        ));
+    }
+
+    function renderHistory(mode) {
+        const items = arData[mode]; // Получаем данные для текущего режима
+    
+        if (!items) {
+            return (
+                <div className="noData">Данные отсутствуют...</div>
+            )
+        }
+    
+        return items.map((item, index) => (
+            <div className="rowHistory" key={index} style={{color: '#909090'}}>
+                <div className="message">{item.message}</div>
+                <div className="user">{item.user}</div>
+                <div className="dt">{item.dt.time} || {item.dt.date}</div>
             </div>
         ));
     }
@@ -130,10 +153,12 @@ export default function OrdersMessage() {
                 <input type="text" className="searchOrdersMessage" placeholder="Поиск по имени"/>
             </div>
             <div className="tableContainer">
-                {renderComponent(selectView)}
+                {renderData(selectView)}
             </div>
-            <button className="historyTableBtn"></button>
-            <div className="historyTable"></div>
+            <button className="historyTableBtn" onClick={() => {handleHistoryClick()}} style={{backgroundColor: history ? '#506365' : '#7A9E9F',  borderRadius: history ? '20px 20px 0 0' : '20px'}}>История заявок</button>
+            <div className="historyTable" style={{display: history ? 'flex' : 'none'}}>
+                {renderHistory(selectView)}
+            </div>
         </div>
     )
 }

@@ -36,7 +36,7 @@ export default function Comunications() {
                 <span className="filter" id="selectedDate">15.11.2024</span><span className="arrowWhom"></span>
             </div>
             <div className="messageCom">
-                <textarea className="textMessage"></textarea>
+                <textarea className="textMessage" placeholder="Введите сообщение"></textarea>
             </div>
             <button className="activeBtn" onClick={handleActiveMess} style={{background: activeMessage ? '#506365' : '#7A9E9F'}}>Активыне cообщения</button>
             <button className="sendMessage">Отправить</button>
