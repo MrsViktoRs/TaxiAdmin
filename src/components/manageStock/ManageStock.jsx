@@ -13,7 +13,7 @@ export default function ManageStock() {
 
     const fetchStock = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v1/stocks/`);
+            const response = await axios.get(`http://213.171.15.111/api/v1/stocks/`);
             setData(response.data);
         } catch (err) {
             setError(err);
@@ -26,7 +26,7 @@ export default function ManageStock() {
     const handleUpdate = async (param) => {
         console.log('Отправляемые данные:', param);
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/v1/stocks/${stockId}/`, 
+            const response = await axios.put(`http://213.171.15.111/api/v1/stocks/${stockId}/`, 
                 param
             );
             await fetchStock();
@@ -92,8 +92,10 @@ export default function ManageStock() {
     useLayoutEffect(() => {
         if (loading) {
             fetchStock();
+            console.log('проверка');
         } else {
             handleButtonClick(1);
+            
         }
     }, [data]);
 

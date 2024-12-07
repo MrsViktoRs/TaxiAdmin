@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import './reports.css';
 
 export default function Reports() {
+
     return (
         <div className="reports">
             <div className="actionReports">

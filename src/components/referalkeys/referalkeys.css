@@ -221,6 +221,7 @@
 }
 
 .btnContainer {
+    position: relative;
     margin-left: 20px;
     display: flex;
     flex-direction: row;

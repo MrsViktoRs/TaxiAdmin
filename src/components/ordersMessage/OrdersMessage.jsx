@@ -123,7 +123,7 @@ export default function OrdersMessage({ messages }) {
                             <button className="modalCloseMessBtn" onClick={() => {handleCloseMessage(selectMess.id)}}>Закр. заявку</button>
                         </span>
                     </span>
-                    <div className="modalContent">{selectMess.message}</div>
+                    <div className="modalContentM">{selectMess.message}</div>
                 </div>
             )
         }
@@ -148,7 +148,7 @@ export default function OrdersMessage({ messages }) {
 
     useEffect(() => {
         fetchMessages();
-    }, [selectMess, message]);
+    }, [selectMess, messages]);
 
     return (
         <div className="ordersMessage">

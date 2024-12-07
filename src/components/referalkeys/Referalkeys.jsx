@@ -156,6 +156,7 @@ export default function Referalkeys() {
             <button className="addKey" onClick={handleAddKeyClick}>Добавить ключ</button>
             <div className="action">
                 <input type="text" className="searchKeys" placeholder="Поиск ключей" onChange={handleFilterChange}/>
+                <input type="text" className="searchKeysNumber" placeholder="Поиск номеру" />
             </div>
             <div className="rowTableTitle">
                 <span className="top_table_keys" id="top-left">Имя ключа</span>
