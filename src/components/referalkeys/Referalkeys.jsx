@@ -13,6 +13,7 @@ export default function Referalkeys() {
     const [paramName, setParamName] = useState();
     const [paramKey, setParamKey] = useState();
     const [search, setSearch] = useState({});
+    const [phone, setPhone] = useState('');
 
     const generateRandomKey = () => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -27,8 +28,20 @@ export default function Referalkeys() {
         const { value } = event.target;
         setSearch(value);
         let param = {
-            name: value
-        }
+            name: value,
+            phone: phone // добавляем phone в параметры поиска
+        };
+        console.log(value);
+        fetchKeys(param);
+    };
+
+    const handlePhoneChange = (event) => {
+        const { value } = event.target;
+        setPhone(value);
+        let param = {
+            name: search, // сохраняем текущее значение поиска по имени
+            phone: value // добавляем номер телефона в параметры поиска
+        };
         console.log(value);
         fetchKeys(param);
     };
@@ -156,7 +169,7 @@ export default function Referalkeys() {
             <button className="addKey" onClick={handleAddKeyClick}>Добавить ключ</button>
             <div className="action">
                 <input type="text" className="searchKeys" placeholder="Поиск ключей" onChange={handleFilterChange}/>
-                <input type="text" className="searchKeysNumber" placeholder="Поиск номеру" />
+                <input type="text" className="searchKeysNumber" placeholder="Поиск номеру" onChange={handlePhoneChange}/>
             </div>
             <div className="rowTableTitle">
                 <span className="top_table_keys" id="top-left">Имя ключа</span>

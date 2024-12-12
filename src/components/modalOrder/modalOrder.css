@@ -4,7 +4,7 @@
     width: 50%;
     min-width: 710px;
     max-width: 1000px;
-    height: 750px;
+    height: 850px;
     background: #fff;
     border-radius: 20px;
     z-index: 5;
@@ -12,6 +12,11 @@
     margin-left: 25%;
     margin-right: 25%;
     flex-direction: column;
+}
+
+.modalOrder input:focus {
+    transition: border-color 0.5s;
+    border: 0.5px solid var(--color-1, #506365);
 }
 
 .tgLink {
@@ -28,16 +33,28 @@
     text-decoration: underline;
 }
 
+.peoplePersonInfo {
+    position: relative;
+    display: flex;
+    width: 90%;
+    padding-left: 5%;
+    padding-right: 5%;
+    height: 10%;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .peopleData {
     position: relative;
     display: flex;
     width: 90%;
     padding-left: 5%;
     padding-right: 5%;
-    height: 15%;
+    height: 10%;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
 }
 
 .peopleData input {
@@ -53,10 +70,22 @@
 .peopleName {
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    width: 40%;
-    min-width: 350px;
+    justify-content: space-between;
+    width: 100%;
+    min-width: 250px;
+}
+
+.peopleName input {
+    position: relative;
+    height: 40px;
+    width: 100%;
+    max-width: 250px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+    font-size: 19px;
 }
 
 .peoplePhone {
@@ -64,8 +93,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 20%;
+    width: 50%;
     min-width: 140px;
+    padding-right: 20px;
+    border-right: 1px solid #ccc;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 .peopleCity {
@@ -73,8 +106,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 20%;
+    width: 50%;
     min-width: 120px;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
 }
 
 .docDriverData {
@@ -145,6 +181,120 @@
     font-size: 19px;
     margin-top: 25px;
     color:  black;
+}
+
+.autoData input {
+    margin-top: 5px;
+}
+
+#modelAutoList {
+    position: absolute;
+    display: flex;
+    width: 90%;
+    margin-left: 5%;
+    min-width: 270px;
+    height: 300px;
+    border: 1px solid #ccc;
+    border-radius: 0 0 20px 20px;
+    background-color: #fff;
+    z-index: 100;
+    overflow: auto;
+}
+
+.modelAutoListUl {
+    position: relative;
+    /* max-height: 300px; */
+    width: 90%;
+    padding-left: 5%;
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    z-index: 101;
+    overflow-y: auto;
+}
+
+#modelAutoList li {
+    position: relative;
+    display: flex;
+    width: 90%;
+    height: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: 5px;
+    /* -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none; */
+    font-size: 19px;
+    color: #7c7c7c;
+    cursor: pointer;
+}
+
+#modelAutoList li:hover {
+    color: black;
+}
+
+.countryDriver {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 42px;
+    margin-top: 5px;
+    min-width: 250px;
+    padding-right: 5%;
+    padding-left: 20px;
+    border-radius: 20px;
+    text-align: center;
+    border-color: #ccc;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 19px;
+}
+
+.countryDriver option {
+    position: relative;
+    width: 50%;
+    max-height: 300px;
+    align-content: center;
+    padding-left: 20px;
+    padding-top: 10px;
+    border-radius: 20px;
+    border: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.colorsAuto {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 42px;
+    margin-top: 5px;
+    min-width: 250px;
+    padding-right: 5%;
+    padding-left: 20px;
+    border-radius: 20px;
+    text-align: center;
+    border-color: #ccc;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 19px;
+    /* color: #7c7c7c; */
+}
+
+.colorsAuto option {
+    position: relative;
+    width: 50%;
+    align-content: center;
+    padding-left: 20px;
+    padding-top: 10px;
+    border-radius: 20px;
+    border: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .ControlOrder {
@@ -239,6 +389,11 @@
         font-size: 16px;
     }
 
+    .countryDriver {
+        padding-left: 2px;
+        min-width: 200px;
+    }
+
     .autoData {
         font-size: 16px;
         min-width: 240px;
@@ -253,5 +408,19 @@
 
     .autoData input {
         font-size: 16px;
+    }
+
+    .colorAuto {
+        font-size: 16px;
+        min-width: 240px;
+    }
+
+    .colorsAuto {
+        font-size: 16px;
+        min-width: 200px;
+    }
+
+    #modelAutoList {
+        margin-left: 0;
     }
 }

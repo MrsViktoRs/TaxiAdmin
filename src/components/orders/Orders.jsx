@@ -94,8 +94,10 @@ export default function Orders ({ orders }) {
             setFetchOrdersRegCalled(true);
         }
         await fetchOrderData(id);
-        setModalOpen(true);
-    }
+        setTimeout(() => {
+            setModalOpen(true);
+        }, 500);
+    };
 
     const handleCloseModal = () => {
         setModalOpen(false);
@@ -103,7 +105,7 @@ export default function Orders ({ orders }) {
 
     useEffect(() => {
         if (modalOpen) {
-            setModalComponent(<ModalOrder handleCloseModal={handleCloseModal} selectedOrder={selectedOrder} />)
+            setModalComponent(<ModalOrder isModalOpen={modalOpen} handleCloseModal={handleCloseModal} selectedOrder={selectedOrder} />)
         } else {
             setModalComponent(null);
             fetchOrdersReg();

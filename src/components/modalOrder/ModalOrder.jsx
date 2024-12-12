@@ -1,50 +1,66 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import deepEqual from 'deep-equal';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './modalOrder.css';
 
-export default function ModalOrder({ handleCloseModal, selectedOrder }) {
+export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrder }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [errorStatus, setErrorStatus] = useState(false);
     const [backendData, setBackendData] = useState([]);
+    const [optionsData, setOptionsData] = useState([]);
+    const [countryData, setCountryData] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [searchModelsAuto, setSearchModelsAuto] = useState([]);
+    const [isClosing, setIsClosing] = useState(false);
     const [highlightedFields, setHighlightedFields] = useState({});
     const [tempOrder, setTempOrder] = useState({
         car: {
             model: {
-                name: 'Не заполнено',
+                name: '',
             },
-            license: 'Не заполнено',
-            vin: 'Не заполнено',
-            number: 'Не заполнено',
-            year: 'Не заполнено',
+            license: '',
+            vin: '',
+            number: '',
+            year: '',
             color: {
-                name: 'Не заполнено',
+                name: '',
             },
         },
         driver_license: {
             country: {
-                title: 'Не заполнено',
+                value: '',
+                title: '',
             },
-            expiry_date: 'Не заполнено',
-            issue_date: 'Не заполнено',
-            number: 'Не заполнено',
-            total_since_date: 'Не заполнено',
+            expiry_date: '',
+            issue_date: '',
+            number: '',
+            total_since_date: '',
         },
         person_info: {
-            first_name: 'Не заполнено',
-            last_name: 'Не заполнено',
-            middle_name: 'Не заполнено',
-            city: 'Не заполнено',
+            first_name: '',
+            last_name: '',
+            middle_name: '',
+            city: '',
         },
         integrations: 18883,
-        phone: 'Не заполнено',
+        phone: '',
     });
 
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            handleCloseModal();
+            setIsClosing(false);
+        }, 5000); // Время анимации закрытия
+    };
+
     function formatDate(dateString, mode) {
-        if (dateString === 'Не заполнено') {return dateString;}
+        if (dateString === 'Не заполнено' || dateString === '' || dateString === undefined) {return dateString;}
         const date = new Date(dateString);
         const day = date.getDate().toString().padStart(2, '0');
         const monthIndex = date.getMonth() + 1;
@@ -54,7 +70,7 @@ export default function ModalOrder({ handleCloseModal, selectedOrder }) {
         const minutes = date.getMinutes().toString().padStart(2, '0');
 
         if (mode === 'date') {
-            const formattedDate = `${day}.${month}.${year}`;
+            const formattedDate = `${year}-${month}-${day}`;
             return formattedDate;
         } else if (mode === 'time') {
             const formattedDate = `${hours}:${minutes}`;
@@ -64,12 +80,116 @@ export default function ModalOrder({ handleCloseModal, selectedOrder }) {
             const timezoneOffset = date.getTimezoneOffset() / -60;
             const timezone = timezoneOffset >= 0 ? `+${timezoneOffset}` : `${timezoneOffset}`;
             return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${timezone}:00`;
+        } else {
+            return dateString;
         }
     }
+
+    const handleSearch = async (text) => {
+        try {
+            const headers = {
+                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1'
+            };
+            const params = {search: text};
+            const responseColors = await axios.get('https://v2.jump.taxi/taxi-public/v1/dictionaries/autoreg/models_search', { headers, params });
+            setSearchModelsAuto(responseColors.data);
+        } catch (err) {
+            setError(err);
+            setErrorStatus(true);
+            console.error(err);
+        }
+    };
+    
+
+    const handleChangeModel = (text) => {
+        setSearchText(text);
+        const newOrder = { 
+            ...tempOrder, 
+            car: { 
+                ...tempOrder.car, 
+                model: { 
+                    name: text 
+                } 
+            }
+        };
+        setTempOrder(newOrder);
+        if (text.length >= 2) {
+            handleSearch(text);
+        }
+    };
+
+    const handleSelectModel = (model) => {
+        setSearchText('');
+        setSearchModelsAuto([]);
+        const newOrder = { 
+            ...tempOrder, 
+            car: { 
+                ...tempOrder.car, 
+                model: {
+                    id: model.id, 
+                    name: model.name 
+                } 
+            }
+        };
+        setTempOrder(newOrder);
+        console.log(newOrder);
+    };
+
+    const handleInputFocus = () => {
+        setIsDropdownOpen(true);
+    };
+
+    const handleInputBlur = () => {
+        console.log(tempOrder);
+        setTimeout(() => {
+          setIsDropdownOpen(false);
+        }, 200);
+    };
+
+    const handleChangeColor = (selectedValue) => {
+        const selectedOption = optionsData.find(option => option.value === selectedValue);
+        const newOrder = { 
+            ...tempOrder, 
+            car: { 
+                ...tempOrder.car, 
+                color: { 
+                    name: selectedOption ? selectedOption.value : selectedValue,
+                    id: selectedOption ? selectedOption.id : ''
+                } 
+            }
+        };
+        setTempOrder(newOrder);
+    };
+
+    const handleChangeCountry = (selectedValue) => {
+        const selectedOption = countryData.find(option => option.title === selectedValue);
+        console.log(selectedOption);
+        const newOrder = { 
+            ...tempOrder, 
+            driver_license: { 
+                ...tempOrder.car, 
+                country: { 
+                    title: selectedOption ? selectedOption.title : selectedValue,
+                    value: selectedOption ? selectedOption.value : ''
+                } 
+            }
+        };
+        setTempOrder(newOrder);
+    };
 
     const fetchBackendData = async () => {
         try {
             setLoading(true);
+            const headers = {
+                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1'
+            };
+            const responseColors = await axios.get('https://v2.jump.taxi/taxi-public/v1/dictionaries/autoreg/colors', { headers });
+            let precolors = responseColors.data;
+            let colors = precolors.slice(1);
+            setOptionsData(colors);
+            const responseCountries = await axios.get('https://v2.jump.taxi/taxi-public/v1/dictionaries/autoreg/countries', { headers });
+            let precountries = responseCountries.data;
+            setCountryData(precountries);
             const phone = selectedOrder.phone.replace(/\D/g, '');
             const responsUserData = await axios.get(`http://127.0.0.1:8000/api/v1/getUser/${phone}`);
             setBackendData(responsUserData.data);
@@ -82,17 +202,55 @@ export default function ModalOrder({ handleCloseModal, selectedOrder }) {
         }
     };
 
-    const handleSave = () => {
-        console.log('Сохраняем изменения');
-        handleValidation();
-        console.log(tempOrder);
+    function compareObjects(obj1, obj2) {
+        if (deepEqual(obj1, obj2)) {
+            return "Объекты идентичны";
+        }
+    
+        const changes = [];
+    
+        function findChanges(obj1, obj2, path = []) {
+            const keys1 = Object.keys(obj1);
+            const keys2 = Object.keys(obj2);
+    
+            keys1.forEach(key => {
+                if (!deepEqual(obj1[key], obj2[key])) {
+                    changes.push([...path, key].join('.'));
+                }
+    
+                if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+                    findChanges(obj1[key], obj2[key], [...path, key]);
+                }
+            });
+    
+            keys2.forEach(key => {
+                if (!obj1.hasOwnProperty(key)) {
+                    changes.push([...path, key].join('.'));
+                }
+            });
+        }
+    
+        findChanges(obj1, obj2);
+    
+        return changes;
+    }
+
+    const handleSave = async () => {
+        try {
+            const headers = 'Client-Key: 4cf38a3d-abd3-4007-8e02-6cdc93c329a1';
+            const response = axios.patch(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications/${selectedOrder.id}/`, { headers });
+            console.log(response.data);
+        } catch (err) {
+            setError(err);
+            console.error(err);
+        }
     };
 
     const handleAccepClick = async () => {
         try {
             setLoading(true);
             const headers = {
-                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1' // заголовок с клиентским ключом
+                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1'
             };
             const body = {'integration_id': 18883};
             // let currentOrder = findMatchingPhoneNumber(selectedOrder.phone, orders);
@@ -117,7 +275,7 @@ export default function ModalOrder({ handleCloseModal, selectedOrder }) {
         try {
             setLoading(true);
             const headers = {
-                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1' // заголовок с клиентским ключом
+                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1'
             };
             const body = { comment: 'Меннеджер отклонил заявку' };
             const response = await axios.delete(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications/${selectedOrder.id}/`, { headers, data: body });
@@ -137,52 +295,15 @@ export default function ModalOrder({ handleCloseModal, selectedOrder }) {
         setTempOrder(prevData => {
             let updatedData = { ...prevData };
             let current = updatedData;
-            
-            // Итерируемся по полям и обновляем значение
             for (let i = 0; i < fields.length - 1; i++) {
                 if (!current[fields[i]]) {
-                    current[fields[i]] = {}; // Создаем объект, если его нет
+                    current[fields[i]] = {};
                 }
                 current = current[fields[i]];
             }
-            
-            // Обновляем конечное значение
             current[fields[fields.length - 1]] = value;
             return updatedData;
         });
-    };
-
-    // const handleValidation = () => {
-    //     const updatedHighlightedFields = {};
-    //     Object.keys(tempOrder).forEach(key => {
-    //         if (tempOrder[key] === 'Не заполнено' || tempOrder[key] === '') {
-    //             updatedHighlightedFields[key] = true;
-    //         } else {
-    //             updatedHighlightedFields[key] = false;
-    //         }
-    //     });
-    //     setHighlightedFields(updatedHighlightedFields);
-    //     console.log(highlightedFields);
-    // };
-
-    const handleValidation = () => {
-        const updatedHighlightedFields = {};
-        highlightFields(tempOrder, updatedHighlightedFields);
-        setHighlightedFields(updatedHighlightedFields);
-    };
-
-    const highlightFields = (obj, highlighted) => {
-        for (const key in obj) {
-            if (typeof obj[key] === 'object') {
-                highlightFields(obj[key], highlighted);
-            } else {
-                if (obj[key] === 'Не заполнено' || obj[key] === '') {
-                    highlighted[key] = true;
-                } else {
-                    highlighted[key] = false;
-                }
-            }
-        }
     };
 
     useEffect(() => {
@@ -207,100 +328,148 @@ export default function ModalOrder({ handleCloseModal, selectedOrder }) {
     }, []);
 
     return (
-        <div className="modalOrder" id="modalOrderId">
+        <div className={`modalOrder ${isModalOpen ? 'open' : ''}`} id="modalOrderId">
             {loading ? (
                 <div className="loader">Загрузка...</div>
-            ):(tempOrder.car ? (
+            ):(
             <>
                 <span className="tgLink">{backendData.phone}</span>
-                <div className="peopleData">
-                    <span className="peopleName">ФИО
+                <div className="peoplePersonInfo">
+                    <span className="peopleName">
                         <input type="text" 
+                        placeholder="Иван"
                         defaultValue={tempOrder.person_info.first_name} 
                         onChange={(e) => handleChange('person_info.first_name', e.target.value)}
-                        style={highlightedFields.first_name? { borderColor: 'red' } : {}}
+                        />
+                        <input type="text" 
+                        placeholder="Иванов"
+                        defaultValue={tempOrder.person_info.last_name} 
+                        onChange={(e) => handleChange('person_info.last_name', e.target.value)} 
+                        />
+                        <input type="text" 
+                        placeholder="Иванович"
+                        defaultValue={tempOrder.person_info.middle_name} 
+                        onChange={(e) => handleChange('person_info.middle_name', e.target.value)} 
                         />
                     </span>
+                </div>
+                <div className="peopleData">
                     <span className="peoplePhone">Телефон
-                        <input type="text" 
+                        <input type="text"
+                        placeholder="+79998887766"
                         defaultValue={tempOrder.phone} 
                         onChange={(e) => handleChange('phone', e.target.value)} 
-                        style={highlightedFields.phone ? { borderColor: 'red' } : {}}
                         />
                     </span>
                     <span className="peopleCity">Город
-                        <input type="text" 
+                        <input type="text"
+                        placeholder="Москва"
                         defaultValue={tempOrder.person_info.city} 
                         onChange={(e) => handleChange('person_info.city', e.target.value)} 
-                        style={highlightedFields.city ? { borderColor: 'red' } : {}}
                         />
                     </span>
                 </div>
                 <div className="docDriverData">
                     <div className="docData">Водительское удостоверение
                         <span className="numberDoc">Серия номер
-                        <input type="text" 
+                        <input type="text"
+                        placeholder="1122333333"
                         defaultValue={tempOrder.driver_license.number} 
                         onChange={(e) => handleChange('driver_license.number', e.target.value)}
-                        style={highlightedFields.number ? { borderColor: 'red' } : {}}
                         />
                         </span>
                         <span className="countryDoc">Страна
-                            <input type="text" 
+                            <select 
+                            name="contry" 
+                            className="countryDriver" 
                             defaultValue={tempOrder.driver_license.country.title} 
-                            onChange={(e) => handleChange('driver_license.country.title', e.target.value)}
-                            style={highlightedFields.title ? { borderColor: 'red' } : {}}
-                            />
+                            onChange={(e) => handleChangeCountry(e.target.value)}
+                            style={{ 
+                                color: tempOrder.driver_license.country.title ? 'black' : 'grey',
+                                }}
+                            >
+                            <option value="" disabled hidden id="countryDeafault">Страна не выбрана</option>
+                                {countryData.map((option) => (
+                                    <option key={option.id} defaultValue={option.title}>{option.title}</option>
+                                ))}
+                            </select>
                         </span>
                         <span className="mindateDoc">Выдано
-                            <input type="text" 
+                            <input type="text"
+                            placeholder="2024-12-01" 
                             defaultValue={formatDate(tempOrder.driver_license.issue_date, 'date')} 
                             onChange={(e) => handleChange('driver_license.issue_date', e.target.value)}
-                            style={highlightedFields.issue_date ? { borderColor: 'red' } : {}}
                             />
                         </span>
                         <span className="maxDateDoc">Действует
-                            <input type="text" 
+                            <input type="text"
+                            placeholder="2027-12-01"
                             defaultValue={formatDate(tempOrder.driver_license.expiry_date, 'date')} 
                             onChange={(e) => handleChange('driver_license.expiry_date', e.target.value)}
-                            style={highlightedFields.expiry_date ? { borderColor: 'red' } : {}}
                             />
                         </span>
                         <span className="startDateDoc">Дата начала
-                            <input type="text" 
+                            <input type="text"
+                            placeholder="2020-11-01" 
                             defaultValue={formatDate(tempOrder.driver_license.total_since_date, 'date')} 
                             onChange={(e) => handleChange('driver_license.total_since_date', e.target.value)}
-                            style={highlightedFields.total_since_date ? { borderColor: 'red' } : {}}
                             />
                         </span>
                     </div>
                     <div className="autoData">Автомобиль
                         <span className="numberAuto">Номер
-                            <input type="text" 
+                            <input type="text"
+                            placeholder="АА777А99"
                             defaultValue={tempOrder.car.number} 
                             onChange={(e) => handleChange('car.number', e.target.value)}
-                            style={highlightedFields.value ? { borderColor: 'red' } : {}}
                             />
                         </span>
                         <span className="modelAuto">Марка
-                            <input type="text" 
-                            defaultValue={tempOrder.car.model.name} 
-                            onChange={(e) => handleChange('car.model.name', e.target.value)}
-                            style={highlightedFields.name ? { borderColor: 'red' } : {}}
+                            <input type="text"
+                            value={tempOrder.car.model.name || ''}
+                            placeholder="Lada"
+                            onChange={(e) => handleChangeModel(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             />
+                            {isDropdownOpen && (
+                                <div id="modelAutoList">
+                                    <ul className="modelAutoListUl">
+                                    {searchModelsAuto.map((model) => (
+                                        <li key={model.id} defaultValue={model.name} onClick={() => handleSelectModel(model)}>{model.name}</li>
+                                    ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </span>
+                        <span className="colorAuto">Цвет
+                            <select 
+                                name="color" 
+                                className="colorsAuto" 
+                                defaultValue={tempOrder.car.color.name} 
+                                onChange={(e) => handleChangeColor(e.target.value)}
+                                style={{ 
+                                    color: tempOrder.car.color.name ? 'black' : 'grey',
+                                }}
+                            >
+                                <option value="" disabled hidden id="colorDefault">Цвет не выбран</option>
+                                {optionsData.map((option) => (
+                                    <option key={option.id} defaultValue={option.value}>{option.value}</option>
+                                ))}
+                            </select>
                         </span>
                         <span className="STSAuto">СТС 
-                            <input type="text" 
+                            <input type="text"
+                            placeholder="1234567890"
                             defaultValue={tempOrder.car.license} 
                             onChange={(e) => handleChange('car.license', e.target.value)}
-                            style={highlightedFields.license ? { borderColor: 'red' } : {}}
                             />
                         </span>
                         <span className="VINAuto">VIN номер
-                            <input type="text" 
+                            <input type="text"
+                            placeholder="ХТА123456С7890123"
                             defaultValue={tempOrder.car.vin} 
                             onChange={(e) => handleChange('car.vin', e.target.value)}
-                            style={highlightedFields.vin ? { borderColor: 'red' } : {}}
                             />
                         </span>
                     </div>
@@ -309,11 +478,9 @@ export default function ModalOrder({ handleCloseModal, selectedOrder }) {
                     <button className="controlBtn" id="acceptModalOrder" onClick={handleAccepClick}>Принять</button>
                     <button className="controlBtn" id="declineModalOrder" onClick={handleDeleteClick}>Отклонить</button>
                     <button className="controlBtn" id="saveModalOrder" onClick={handleSave}>Изменить</button>
-                    <button className="controlBtn" id="closeModalOrder" onClick={() => {handleCloseModal()}}>Закрыть</button>
+                    <button className="controlBtn" id="closeModalOrder" onClick={() => {handleClose()}}>Закрыть</button>
                 </div>
-            </>) : (
-                <div className="loader">Загрузка...</div>
-            )
+                </>
             )}
         </div>
     );
