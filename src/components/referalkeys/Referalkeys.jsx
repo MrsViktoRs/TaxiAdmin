@@ -82,6 +82,7 @@ export default function Referalkeys() {
         let param = {
           name: paramName,
           key: paramKey || generateRandomKey(),
+          count_invite: 0
         };
       
         try {
