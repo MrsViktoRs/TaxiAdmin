@@ -6,6 +6,7 @@ import axios from "axios";
 export default function Authorization({ logIn, regData, setRegData }) {
     const [error, setError] = useState(null);
     const [isRegister, setIsRegister] = useState(false);
+    const apiUrl = process.env.REACT_APP_URL_API;
 
     const handleClickRegister = () => {
         if (isRegister) {
@@ -29,7 +30,7 @@ export default function Authorization({ logIn, regData, setRegData }) {
             setIsRegister(false);
             try {
                 console.log(regData, '2');
-                const response = await axios.post(`http://127.0.0.1:8000/api/v1/create_user/`, regData);
+                const response = await axios.post(`${apiUrl}/create_user/`, regData);
                 // Добавьте обработку успешного ответа здесь, если необходимо
             } catch (error) {
                 if (error.response) {
