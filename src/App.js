@@ -13,11 +13,12 @@ function App() {
     password: '',
     invite: '',
   });
+  const apiUrl = process.env.REACT_APP_URL_API;
 
   const handleLogIn = async () => {
     try {
       console.log(regData);
-      const response = await axios.post(`http://127.0.0.1:8000/api/v1/login/`, {regData});
+      const response = await axios.post(`${apiUrl}/login/`, {regData});
       localStorage.setItem('isLoggedIn', 'true');
       setIsLogIn(true);
     } catch (error) {
