@@ -11,6 +11,7 @@ export default function OrdersMessage({ messages }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalOpenHistory, setIsModalOpenHistory] = useState(false);
     const [search, setSearch] = useState();
+    const apiUrl = process.env.REACT_APP_URL_API;
 
     const arData = {
         order: [
@@ -25,12 +26,12 @@ export default function OrdersMessage({ messages }) {
     }
 
     const fetchMessages = async () => {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/messages/poll/');
+        const response = await fetch(`${apiUrl}/messages/poll/`);
         setMessage(await response.json());
     }
 
     const fetchHistory = async (filter = '') => {
-        const response = await fetch(`http://127.0.0.1:8000/api/v1/all_history/?search=${filter}`);
+        const response = await fetch(`${apiUrl}/all_history/?search=${filter}`);
         const data = await response.json();
         setHistoryData(data);
     };
@@ -51,7 +52,7 @@ export default function OrdersMessage({ messages }) {
     }
 
     const handleCloseMessage = async (id) => {
-        const response = await axios.patch(`http://127.0.0.1:8000/api/v1/all_history/${id}/`);
+        const response = await axios.patch(`${apiUrl}/all_history/${id}/`);
         const data = response;
         fetchHistory();
         fetchMessages();

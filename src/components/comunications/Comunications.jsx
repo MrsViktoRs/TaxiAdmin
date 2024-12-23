@@ -15,6 +15,7 @@ export default function Comunications() {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [selectedMess, setSelectedMess] = useState(null);
     const [modalComponent, setModalComponent] = useState(null);
+    const apiUrl = process.env.REACT_APP_URL_API;
 
     const formattedDate = () => {
         const currentDate = new Date();
@@ -71,7 +72,7 @@ export default function Comunications() {
         }
         console.log(message);
         try {
-            const response = await axios.post(`http://127.0.0.1:8000/api/v1/saveMessage/`, message);
+            const response = await axios.post(`${apiUrl}/saveMessage/`, message);
             fetchActiveMessage();
             console.log(response);
             setSelectedTime(null);
@@ -85,7 +86,7 @@ export default function Comunications() {
 
     const fetchActiveMessage = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v1/saveMessage/`);
+            const response = await axios.get(`${apiUrl}/saveMessage/`);
             setActiveMessageSet(response.data);
         } catch (err) {
             console.log(err);
@@ -94,7 +95,7 @@ export default function Comunications() {
 
     const handleDeleteMessage = async (id) => {
         try {
-            const response = await axios.delete(`http://127.0.0.1:8000/api/v1/saveMessage/${id}/`);
+            const response = await axios.delete(`${apiUrl}/saveMessage/${id}/`);
             setIsOpenModal(false);
             setSelectedMess(null);
         } catch (err) {
@@ -111,7 +112,7 @@ export default function Comunications() {
             } else if (selectedMess.whom === "Партнёрам") {
                 selectedMess.whom = "partner";
             }
-            const response = await axios.put(`http://127.0.0.1:8000/api/v1/saveMessage/${id}/`, { ...selectedMess });
+            const response = await axios.put(`${apiUrl}/saveMessage/${id}/`, { ...selectedMess });
             console.log(response);
             setIsOpenModal(false);
             setSelectedMess(null);

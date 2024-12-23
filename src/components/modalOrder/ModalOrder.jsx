@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import deepEqual from 'deep-equal';
 import 'react-toastify/dist/ReactToastify.css';
 
 import './modalOrder.css';
@@ -18,6 +17,7 @@ export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrde
     const [searchModelsAuto, setSearchModelsAuto] = useState([]);
     const [isClosing, setIsClosing] = useState(false);
     const [highlightedFields, setHighlightedFields] = useState({});
+    const [appInter, setAppInter] = useState({});
     const [tempOrder, setTempOrder] = useState({
         car: {
             model: {
@@ -47,13 +47,17 @@ export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrde
             middle_name: '',
             city: '',
         },
-        integrations: 18883,
+        integrations: {
+
+        },
         phone: '',
     });
+    const apiUrl = process.env.REACT_APP_URL_API;
 
     const handleClose = () => {
         console.log(tempOrder);
         setIsClosing(true);
+        console.log(appInter);
         setTimeout(() => {
             handleCloseModal();
             setIsClosing(false);
@@ -192,7 +196,7 @@ export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrde
             let precountries = responseCountries.data;
             setCountryData(precountries);
             const phone = selectedOrder.phone.replace(/\D/g, '');
-            const responsUserData = await axios.get(`http://127.0.0.1:8000/api/v1/getUser/${phone}`);
+            const responsUserData = await axios.get(`${apiUrl}/getUser/${phone}`);
             setBackendData(responsUserData.data);
         } catch (err) {
             setError(err);
@@ -256,6 +260,7 @@ export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrde
                 { headers }
             );
             if (( await response).status === 200) {
+                handleCheckAgreg();
                 toast.success('Данные сохранены');
             }
         } catch (err) {
@@ -264,6 +269,22 @@ export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrde
             toast.error('Произошла ошибка при сохранении, проверьте корректность данных');
         }
     };
+
+    const handleCheckAgreg = async () => {
+        try {
+            const headers = {
+                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1',
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+            };
+            const response = await axios.get(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications/${selectedOrder.id}/integrations/${selectedOrder.integrations[0].application_integrations[0].id}`, {headers:headers})
+            setAppInter(response.data.application_integrations[0].status)
+        } catch (err) {
+            setError(err);
+            console.log(err);
+        }
+    }
 
     const handleAccepClick = async () => {
         try {
@@ -275,16 +296,45 @@ export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrde
                 'Cache-Control': 'no-cache'
             };
             console.log('send_patch')
-            const responseRegister = await axios.patch(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications/${selectedOrder.id}/integrations/${selectedOrder.integrations[0].id}`, null, { headers: headers });
-            if (responseRegister.status === 200) {
-                toast.success('Заявка принята');
-                const responseAcceptMess = await axios.post(`http://127.0.0.1:8000/api/v1/accept_message/`, {
-                    chat_id: backendData.chat_id
-                });
-                handleCloseModal();
-            } else {
-                toast.error('Произошла ошибка на этапе регистации заявки через конкретную интеграцию', responseRegister.status);
+            const status_agerg = selectedOrder.integrations[0].application_integrations[0].status.name
+            console.log(appInter.slug)
+            if (appInter.slug === "exchange_error") {
+                toast.error('Ошибка агрегатора, проверьте корректность данных');
+                return 
             }
+            if (selectedOrder.integrations[0].application_integrations[0].id) {
+                const responseRegister = await axios.patch(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications/${selectedOrder.id}/integrations/${selectedOrder.integrations[0].application_integrations[0].id}`, null, { headers: headers });
+                console.log(responseRegister)
+                if (responseRegister.status === 204) {
+                    toast.success('Заявка принята');
+                    const responseAcceptMess = await axios.post(`${apiUrl}/accept_message/`, {
+                        chat_id: backendData.chat_id,
+                        name: selectedOrder.person_info.first_name,
+                        surname: selectedOrder.person_info.last_name,
+                        patronymic: selectedOrder.person_info.middle_name
+                    });
+                    handleCloseModal();
+                } else {
+                    toast.error('Произошла ошибка на этапе регистации заявки через конкретную интеграцию', responseRegister.status);
+                }
+            } else {
+                const responseAgreg = await axios.post(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications/${selectedOrder.id}/integrations`, {integration_id:18883}, {headers: headers});
+                console.log(responseAgreg)
+                if (responseAgreg.status == 201) {
+                    const responseRegister = await axios.patch(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications/${selectedOrder.id}/integrations/${responseAgreg.data.application_integration_id}`, null, { headers: headers });
+                    console.log(responseRegister)
+                    if (responseRegister.status === 204) {
+                        toast.success('Заявка принята');
+                        const responseAcceptMess = await axios.post(`${apiUrl}/accept_message/`, {
+                            chat_id: backendData.chat_id,
+                            name: selectedOrder.person_info.first_name,
+                            surname: selectedOrder.person_info.last_name,
+                            patronymic: selectedOrder.person_info.middle_name
+                        });
+                        handleCloseModal();
+                }
+            }
+        }
         } catch (err) {
             setError(err);
             console.error(err);
@@ -348,7 +398,7 @@ export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrde
         }));
         fetchBackendData();
         setLoading(false);
-        
+        handleCheckAgreg();
     }, []);
 
     return (
@@ -356,8 +406,10 @@ export default function ModalOrder({ isModalOpen, handleCloseModal, selectedOrde
             {loading ? (
                 <div className="loader">Загрузка...</div>
             ):(
-            <>
+            <>  <span className="dataUser">
+                <span className="agergStatus">Статус агрегатора: {appInter.name}</span>
                 <span className="tgLink" onClick={() => window.open(`https://t.me/${backendData.chat_id}`, '_blank')}>https://t.me/@{backendData.chat_id}</span>
+                </span>
                 <div className="peoplePersonInfo">
                     <span className="peopleName">
                         <input type="text" 

@@ -10,10 +10,11 @@ export default function ManageStock() {
     const [text, setText] = useState();
     const [selectElem, setSelectElem] = useState(null);
     const [stockId, setStockId] = useState(1);
+    const apiUrl = process.env.REACT_APP_URL_API;
 
     const fetchStock = async () => {
         try {
-            const response = await axios.get(`http://213.171.15.111/api/v1/stocks/`);
+            const response = await axios.get(`${apiUrl}/stocks/`);
             setData(response.data);
         } catch (err) {
             setError(err);
@@ -26,7 +27,7 @@ export default function ManageStock() {
     const handleUpdate = async (param) => {
         console.log('Отправляемые данные:', param);
         try {
-            const response = await axios.put(`http://213.171.15.111/api/v1/stocks/${stockId}/`, 
+            const response = await axios.put(`${apiUrl}/stocks/${stockId}/`, 
                 param
             );
             await fetchStock();

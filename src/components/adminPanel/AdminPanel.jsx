@@ -21,11 +21,12 @@ export default function AdminPanel( {logOut, username} ) {
     const [newOrders, setNewOrders] = useState([]);
     const [notificationSent, setNotificationSent] = useState({orders: false, messages: false});
     const [allUsers, setAllUsers] = useState([]);
+    const apiUrl = process.env.REACT_APP_URL_API;
 
     useEffect(() => {
         const audio = new Audio(process.env.PUBLIC_URL + '/audio/new_message.WAV');
         const fetchOrders = async () => {
-            const response = await fetch('http://127.0.0.1:8000/api/v1/check_reg/');
+            const response = await fetch(`${apiUrl}/check_reg/`);
             const data = await response.json();
             // setOrders(data);
             setAllUsers(data);
@@ -51,16 +52,14 @@ export default function AdminPanel( {logOut, username} ) {
                       };
         
                     const response_jump = await axios.get(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications`, {params, headers});
-                    // if (response_jump.data.items.length=== 1) {
-                    //     const response = await axios.post('http://127.0.0.1:8000/api/v1/send_message/', {
-                    //         chat_id: data[0].chat_id,
-                    //     });
-                    //     console.log(response);
-                    // }
-                    setNewOrders(lastMessage);
-                    setNotificationSent({orders: false});
-                    toast('Новая заявка на регистрацию!');
-                    audio.play();
+                    console.log(response_jump.data)
+                    if (response_jump.data.items.length=== 1) {
+                        setNewOrders(lastMessage);
+                        setNotificationSent({orders: false});
+                        toast('Новая заявка на регистрацию!');
+                        audio.play();
+                        console.log(response);
+                    }
                 } else {
                     setOrders(data);
                     return
@@ -70,7 +69,7 @@ export default function AdminPanel( {logOut, username} ) {
 
         const fetchMessages = async () => {
             console.log('fetchMessages');
-            const response = await fetch('http://127.0.0.1:8000/api/v1/messages/poll/');
+            const response = await fetch(`${apiUrl}/messages/poll/`);
             const data = await response.json();
             if (data.length <= messages.length) {
                 setMessages(data);

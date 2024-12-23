@@ -14,6 +14,7 @@ export default function Referalkeys() {
     const [paramKey, setParamKey] = useState();
     const [search, setSearch] = useState({});
     const [phone, setPhone] = useState('');
+    const apiUrl = process.env.REACT_APP_URL_API;
 
     const generateRandomKey = () => {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -48,7 +49,7 @@ export default function Referalkeys() {
 
     const updateKeys = async () => {
         try {
-            const response = await axios.put(`http://127.0.0.1:8000/api/v1/ref-keys/${selectKey.id}/`, {
+            const response = await axios.put(`${apiUrl}/ref-keys/${selectKey.id}/`, {
                 name: paramName,
                 key: paramKey || generateRandomKey(),
             });
@@ -66,7 +67,7 @@ export default function Referalkeys() {
 
     const fetchKeys = async (param) => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v1/ref-keys/`, {params: param});
+            const response = await axios.get(`${apiUrl}/ref-keys/`, {params: param});
             setData(response.data)
             console.log('Ответ получен')
         } catch (err) {
@@ -84,7 +85,7 @@ export default function Referalkeys() {
         };
       
         try {
-          const response = await axios.post('http://127.0.0.1:8000/api/v1/ref-keys/', param);
+          const response = await axios.post(`${apiUrl}/ref-keys/`, param);
           console.log('Ключ создан');
           setIsModalOpen(false);
           fetchKeys();
@@ -99,7 +100,7 @@ export default function Referalkeys() {
 
     const deleteRefKey = async (id) => {
         try {
-            const response = await axios.delete(`http://127.0.0.1:8000/api/v1/ref-keys/${id}/`);
+            const response = await axios.delete(`${apiUrl}/ref-keys/${id}/`);
             console.log('Ключ удалён');
             fetchKeys();
             return response.data;

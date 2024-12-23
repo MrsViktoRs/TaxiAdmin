@@ -14,11 +14,12 @@ export default function Reports() {
         surname: '',
         patronymic: '',
     });
+    const apiUrl = process.env.REACT_APP_URL_API;
 
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/v1/get_users/');
+            const response = await axios.get(`${apiUrl}/get_users/`);
             setUsers(await response.data);
             console.log(response.data);
         } catch (err) {
@@ -28,10 +29,6 @@ export default function Reports() {
 
     const handleSearch = (e) => {
         setSearchParams({ ...searchParams, [e.target.name]: e.target.value });
-    }
-
-    const handleClickFilter = (e) => {
-        
     }
 
     useEffect(() => {

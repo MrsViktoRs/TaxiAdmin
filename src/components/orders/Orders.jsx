@@ -13,6 +13,7 @@ export default function Orders ({ orders }) {
     const [modalComponent, setModalComponent] = useState(null);
     const [fetchOrdersRegCalled, setFetchOrdersRegCalled] = useState(false);
     const [partners, setPartners] = useState([]);
+    const apiUrl = process.env.REACT_APP_URL_API;
 
     function formatDate(dateString, mode) {
         const date = new Date(dateString);
@@ -43,7 +44,7 @@ export default function Orders ({ orders }) {
 
     const fetchOrdersPartner = async () => {
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/api/v1/get_partners/`);
+            const response = await axios.get(`${apiUrl}/get_partners/`);
             console.log(response.data);
             setPartners(response.data);
         } catch (err) {
@@ -55,7 +56,7 @@ export default function Orders ({ orders }) {
 
     const handleClickPartner = async (id) => {
         try {
-            const responseAcceptMess = await axios.post(`http://127.0.0.1:8000/api/v1/accept_message/`, {
+            const responseAcceptMess = await axios.post(`${apiUrl}/accept_message/`, {
                 chat_id: id
             });
             console.log(responseAcceptMess);
