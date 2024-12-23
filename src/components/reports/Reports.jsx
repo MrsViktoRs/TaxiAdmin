@@ -4,6 +4,39 @@ import axios from 'axios';
 import './reports.css';
 
 export default function Reports() {
+    const [users, setUsers] = useState([]);
+    const [searchParams, setSearchParams] = useState({
+        isNotTinkoff: false,
+        isWin: false,
+        isNotActive: false,
+        phone: '',
+        name: '',
+        surname: '',
+        patronymic: '',
+    });
+
+
+    const fetchUsers = async () => {
+        try {
+            const response = await axios.get('http://127.0.0.1:8000/api/v1/get_users/');
+            setUsers(await response.data);
+            console.log(response.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const handleSearch = (e) => {
+        setSearchParams({ ...searchParams, [e.target.name]: e.target.value });
+    }
+
+    const handleClickFilter = (e) => {
+        
+    }
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     return (
         <div className="reports">
@@ -15,6 +48,7 @@ export default function Reports() {
                 <input type="checkbox" className="reportsCheckBox"/>
                 <span className="labelCheckBox">Победители акции</span>
                 <input type="checkbox" className="reportsCheckBox"/>
+                <input type="text" className="searchInput" placeholder="Поиск"/>
            </div>
            <div className="tableContainer">
                 <table className="tableReports">
@@ -29,126 +63,16 @@ export default function Reports() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
-                        <tr className="rowDataReports">
-                            <td className="fullName">Хомутов Вкитор Андреевич</td>
-                            <td>@WYJBro</td>
-                            <td>+79066642548</td>
-                            <td>Твой таксопарк</td>
-                            <td>16.11.2024</td>
-                            <td>35000</td>
-                        </tr>
+                        {users.map((user) => (
+                            <tr className="rowDataReports">
+                                <td className="fullName">{user.surname} {user.name} {user.patronymic}</td>
+                                <td onClick={() => window.open(`https://t.me/${user.chat_id}`, '_blank')} className="linkUser">https://t.me/@{user.chat_id}</td>
+                                <td>{user.phone}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
            </div>

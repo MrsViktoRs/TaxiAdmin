@@ -12,6 +12,7 @@ export default function Orders ({ orders }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [modalComponent, setModalComponent] = useState(null);
     const [fetchOrdersRegCalled, setFetchOrdersRegCalled] = useState(false);
+    const [partners, setPartners] = useState([]);
 
     function formatDate(dateString, mode) {
         const date = new Date(dateString);
@@ -40,6 +41,32 @@ export default function Orders ({ orders }) {
         setSelectedView(view)
     }
 
+    const fetchOrdersPartner = async () => {
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/api/v1/get_partners/`);
+            console.log(response.data);
+            setPartners(response.data);
+        } catch (err) {
+            setError(err);
+            console.log(error);
+        }
+
+    }
+
+    const handleClickPartner = async (id) => {
+        try {
+            const responseAcceptMess = await axios.post(`http://127.0.0.1:8000/api/v1/accept_message/`, {
+                chat_id: id
+            });
+            console.log(responseAcceptMess);
+            fetchOrdersPartner();
+        } catch (err) {
+            setError(err);
+            console.log(error);
+        }
+        
+    }
+
     const fetchOrdersReg = async () => {
         console.log(modalOpen);
         if (modalOpen) return;
@@ -47,14 +74,14 @@ export default function Orders ({ orders }) {
             console.log('отпрапвляем запрос', 'ordersReg');
             setLoading(true);
             const params = {
-                direction: ['taxi'], // Направления регистрации
-                status: ['draft', 'not_filled', "exchange_error"],
+                direction: ['taxi'],
+                status: ['draft', 'not_filled', "exchange_error", 'not_processed'],
                 page: 1,
                 per_page: '20',
                 order: '-date'
               };
             const headers = {
-                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1' // заголовок с клиентским ключом
+                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1'
               };
             const response_jump = await axios.get(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications`, {params, headers});
             setData(response_jump.data.items);
@@ -74,7 +101,7 @@ export default function Orders ({ orders }) {
         try {
             setLoading(true);
             const headers = {
-                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1' // заголовок с клиентским ключом
+                'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1'
             };
             const response = await axios.get(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications/${id}/`, { headers });
             const orderData = response.data.item;
@@ -94,14 +121,16 @@ export default function Orders ({ orders }) {
             setFetchOrdersRegCalled(true);
         }
         await fetchOrderData(id);
-        setTimeout(() => {
-            setModalOpen(true);
-        }, 500);
+        setModalOpen(true);
     };
 
     const handleCloseModal = () => {
         setModalOpen(false);
     }
+
+    useEffect(() => {
+        fetchOrdersPartner();
+    }, [selectedView]);
 
     useEffect(() => {
         if (modalOpen) {
@@ -121,6 +150,8 @@ export default function Orders ({ orders }) {
             </div>
             <div className="tableContainer">
                 <table className="tableOrder">
+                    {selectedView == 1 ? (
+                    <>
                     <thead>
                         <tr className="rowTitle">
                             <th className="titleFullName">ФИО</th>
@@ -133,13 +164,13 @@ export default function Orders ({ orders }) {
                     <tbody>
                         {data.length > 0 ? (
                             data.map((order, index) => (
-                                <tr key={index} onClick={() => {handleModalOpen(order.id)}} className="rowDataOrdersReg">
-                                    <td>{order.name}</td>
-                                    <td>{order.phone}</td>
-                                    <td>{formatDate(order.date, 'time')}</td>
-                                    <td>{formatDate(order.date, 'date')}</td>
-                                    <td>{order.status.title}</td>
-                                </tr>
+                            <tr key={index} onClick={() => {handleModalOpen(order.id)}} className="rowDataOrdersReg">
+                                <td>{order.name}</td>
+                                <td>{order.phone}</td>
+                                <td>{formatDate(order.date, 'time')}</td>
+                                <td>{formatDate(order.date, 'date')}</td>
+                                <td>{order.status.title}</td>
+                            </tr>
                             ))
                         ) : (
                             <tr className="noOrders">
@@ -147,6 +178,34 @@ export default function Orders ({ orders }) {
                             </tr>
                         )}
                     </tbody>
+                        </>
+                    ):(
+                        <>
+                    <thead>
+                        <tr className="rowTitle">
+                            <th className="titleFullName">ФИО</th>
+                            <th>Телефон</th>
+                            <th className="titleUrlJump">Номер карты</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {partners.length > 0 ? (
+                            partners.map((order, index) => (
+                            <tr key={index} onClick={() => {handleClickPartner(order.chat_id)}} className="rowDataOrdersReg">
+                                <td>{`${order.surname} ${order.name} ${order.patronymic}`}</td>
+                                <td>{order.phone}</td>
+                                <td>{order.card_number}</td>
+                            </tr>
+                            ))
+                        ) : (
+                            <tr className="noOrders">
+                                <td colSpan="5" id="noOrdersId">Заявок нет</td>
+                            </tr>
+                        )}
+                    </tbody>
+                        </>
+                    )}
+
                 </table>
             </div>
         </div>

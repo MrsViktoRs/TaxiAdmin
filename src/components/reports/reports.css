@@ -123,6 +123,12 @@
     white-space: nowrap;
 }
 
+.linkUser {
+    text-decoration: underline;
+    color: var(--color-1, #506365);
+    cursor: pointer;
+}
+
 .btnDownloadDocs {
     position: relative;
     margin-top: 20px;
@@ -134,6 +140,18 @@
     border: none;
     font-size: 20px;
     color:#fff;
+}
+
+.searchInput {
+    position: relative;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    border: none;
+    width: 300px;
+    height: 35px;
+    padding-left: 15px;
+    font-size: 16px;
 }
 
 @media only screen and (min-width: 1101px) and (max-width: 1500px) {

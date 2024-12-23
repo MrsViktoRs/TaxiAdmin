@@ -10,6 +10,7 @@ export default function OrdersMessage({ messages }) {
     const [selectMess, setSelectMess] = useState(messages);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isModalOpenHistory, setIsModalOpenHistory] = useState(false);
+    const [search, setSearch] = useState();
 
     const arData = {
         order: [
@@ -28,11 +29,17 @@ export default function OrdersMessage({ messages }) {
         setMessage(await response.json());
     }
 
-    const fetchHistory = async () => {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/all_history/');
+    const fetchHistory = async (filter = '') => {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/all_history/?search=${filter}`);
         const data = await response.json();
         setHistoryData(data);
-    }
+    };
+
+    const handleSearchChange = (event) => {
+        const { value } = event.target;
+        setSearch(value); // Обновляем состояние поиска
+        fetchHistory(value); // Вызываем функцию для получения данных с фильтром
+    };
 
     const handleViewClick = (view) => {
         setSelectView(view);
@@ -160,12 +167,12 @@ export default function OrdersMessage({ messages }) {
                     <span id="appealMess" className="viewBtn" onClick={() => {handleViewClick('appeal')}} style={{backgroundColor: selectView === 'appeal' ? '#506365' : '#7A9E9F'}}>Обращения</span>
                     <span id="helpMess" className="viewBtn" onClick={() => {handleViewClick('help')}} style={{backgroundColor: selectView === 'help' ? '#506365' : '#7A9E9F'}}>Помощь на дороге</span>
                 </div>
-                <input type="text" className="searchOrdersMessage" placeholder="Поиск по имени"/>
             </div>
             <div className="tableContainer">
                 {renderData(selectView)}
             </div>
             <button className="historyTableBtn" onClick={() => {handleHistoryClick()}} style={{backgroundColor: history ? '#506365' : '#7A9E9F',  borderRadius: history ? '20px 20px 0 0' : '20px'}}>История заявок</button>
+            <input type="text" className="searchOrdersMessage" placeholder="Поиск по имени" onChange={handleSearchChange} value={search}/>
             <div className="historyTable" style={{display: history ? 'flex' : 'none'}}>
                 {renderHistory(selectView)}
             </div>

@@ -13,7 +13,7 @@ import OrdersMessage from '../ordersMessage/OrdersMessage.jsx';
 import Reports from "../reports/Reports.jsx";
 import './adminPanel.css'
 
-export default function AdminPanel() {
+export default function AdminPanel( {logOut, username} ) {
     const [selectView, setSelectView] = useState('orderView');
     const [messages, setMessages] = useState([]);
     const [newMessages, setNewMessages] = useState([]);
@@ -23,6 +23,7 @@ export default function AdminPanel() {
     const [allUsers, setAllUsers] = useState([]);
 
     useEffect(() => {
+        const audio = new Audio(process.env.PUBLIC_URL + '/audio/new_message.WAV');
         const fetchOrders = async () => {
             const response = await fetch('http://127.0.0.1:8000/api/v1/check_reg/');
             const data = await response.json();
@@ -39,7 +40,7 @@ export default function AdminPanel() {
                     const params = {
                         direction: ['taxi'], // Направления регистрации
                         search: lastMessage.phone,     // Поиск по ФИО и телефону
-                        status: ['draft', 'not_filled'],    // Статусы заявок
+                        status: ['draft', 'not_filled', 'not_processed', 'exchange_error', 'filled'],  // Статусы заявок
                         page: 1,                            // Текущая страница
                         per_page: '20',                     // Количество элементов на странице
                         order: '-date'                      // Сортировка по дате создания (по убыванию)
@@ -59,6 +60,7 @@ export default function AdminPanel() {
                     setNewOrders(lastMessage);
                     setNotificationSent({orders: false});
                     toast('Новая заявка на регистрацию!');
+                    audio.play();
                 } else {
                     setOrders(data);
                     return
@@ -67,6 +69,7 @@ export default function AdminPanel() {
         };
 
         const fetchMessages = async () => {
+            console.log('fetchMessages');
             const response = await fetch('http://127.0.0.1:8000/api/v1/messages/poll/');
             const data = await response.json();
             if (data.length <= messages.length) {
@@ -80,18 +83,21 @@ export default function AdminPanel() {
                     setNewMessages(item);
                     setNotificationSent({messages: false});
                     toast('Новая заявка!');
+                    audio.play();
                 }
                 else if (data.filter((message) => message.role === 'appeal').length > 0) {
                     const item = data.filter((message) => message.role === 'appeal');
                     setNewMessages(item);
                     setNotificationSent({messages: false});
                     toast('Новое обращение!');
+                    audio.play();
                 }
                 else if (data.filter((message) => message.role === 'help').length > 0) {
                     const item = data.filter((message) => message.role === 'help');
                     setNewMessages(item);
                     setNotificationSent({messages: false});
                     toast('Нужна помощь!');
+                    audio.play();
                 }
                 return
             }
@@ -141,7 +147,7 @@ export default function AdminPanel() {
             case 'orderView':
                 return (
                 <>
-                <Headadmin />
+                <Headadmin logOut={logOut} username={username}/>
                 <Mainbuttons onClick={handleViewClick}/>
                 <Orders orders={allUsers}/>
                 <ToastContainer hideProgressBar={true}/>
@@ -150,7 +156,7 @@ export default function AdminPanel() {
             case 'manageStockView':
                 return (
                 <>
-                <Headadmin />
+                <Headadmin logOut={logOut} username={username}/>
                 <Mainbuttons onClick={handleViewClick}/>
                 <ManageStock />
                 <ToastContainer hideProgressBar={true}/>
@@ -159,7 +165,7 @@ export default function AdminPanel() {
             case 'referalKeysView':
                 return (
                 <>
-                <Headadmin />
+                <Headadmin logOut={logOut} username={username}/>
                 <Mainbuttons onClick={handleViewClick}/>
                 <Referalkeys />
                 <ToastContainer hideProgressBar={true}/>
@@ -168,7 +174,7 @@ export default function AdminPanel() {
             case 'comunicationView':
                 return (
                 <>
-                <Headadmin />
+                <Headadmin logOut={logOut} username={username}/>
                 <Mainbuttons onClick={handleViewClick}/>
                 <Comunications />
                 <ToastContainer hideProgressBar={true}/>
@@ -177,7 +183,7 @@ export default function AdminPanel() {
             case 'ordersAndMessageView':
                 return (
                 <>
-                <Headadmin />
+                <Headadmin logOut={logOut} username={username}/>
                 <Mainbuttons onClick={handleViewClick}/>
                 <OrdersMessage messages={messages}/>
                 <ToastContainer hideProgressBar={true}/>
@@ -186,7 +192,7 @@ export default function AdminPanel() {
             case 'reportView':
                 return (
                 <>
-                <Headadmin />
+                <Headadmin logOut={logOut} username={username}/>
                 <Mainbuttons onClick={handleViewClick}/>
                 <Reports />
                 <ToastContainer hideProgressBar={true}/>
@@ -195,7 +201,7 @@ export default function AdminPanel() {
             default:
                 return (
                     <>
-                    <Headadmin />
+                    <Headadmin logOut={logOut} username={username}/>
                     <Mainbuttons onClick={handleViewClick}/>
                     <ToastContainer hideProgressBar={true}/>
                     </>

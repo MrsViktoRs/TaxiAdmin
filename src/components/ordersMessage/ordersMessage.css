@@ -71,8 +71,11 @@
     padding-left: 20px;
     /* padding-top: 12px; */
     margin-bottom: 15px;
-    height: 42px;
+    height: 40px;
     font-size: 19px;
+    margin-bottom: -30px;
+    margin-right: 2%;
+    margin-left: auto;
 }
 
 .tableContainer {
