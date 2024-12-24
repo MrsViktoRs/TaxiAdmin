@@ -13,15 +13,21 @@
     align-content: center;
  }
 
+ .usernameAdmin {
+   margin-top: 19px;
+   margin-right: 20px;
+ }
+
  .logInBtn {
     font-size: 20px;
     background: none;
     border: none;
     color: #fff;
     margin-top: 19px;
-    margin-right: 120px;
+    margin-right: 70px;
     height: 18px;
     padding-bottom: 5px;
+    cursor: pointer;
  }
 
  .logInBtn:hover {

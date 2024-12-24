@@ -21,7 +21,6 @@ export default function Authorization({ logIn, regData, setRegData }) {
             ...regData,
             [e.target.name]: e.target.value
         });
-        console.log(regData, '1');
     }
 
     const handleClickValidate = async () => {

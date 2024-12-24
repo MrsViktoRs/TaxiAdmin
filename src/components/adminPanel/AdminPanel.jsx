@@ -29,12 +29,10 @@ export default function AdminPanel( {logOut, username} ) {
 
         // Функция для получения новых заявок
         const fetchOrders = async () => {
-            console.log('OP')
             const params = lastChecked ? { last_checked: lastChecked } : {};
             const response = await fetch(`${apiUrl}/check_reg/`, { method: 'GET', headers: params });
             const data = await response.json();
             setAllUsers(data);
-            console.log(data.length, orders.length)
             if (data.length > orders.length) {
                 console.log('Новая заявка на регистрацию');
                 const lastMessage = data[data.length - 1];
@@ -117,8 +115,7 @@ export default function AdminPanel( {logOut, username} ) {
 
     function handleViewClick(view) {
         setSelectView(view);
-        console.log(view)
-    }
+    };
 
     function renderComponent() {
         switch (selectView) {
