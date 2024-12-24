@@ -21,120 +21,99 @@ export default function AdminPanel( {logOut, username} ) {
     const [newOrders, setNewOrders] = useState([]);
     const [notificationSent, setNotificationSent] = useState({orders: false, messages: false});
     const [allUsers, setAllUsers] = useState([]);
+    const [lastChecked, setLastChecked] = useState(null);
     const apiUrl = process.env.REACT_APP_URL_API;
 
     useEffect(() => {
         const audio = new Audio(process.env.PUBLIC_URL + '/audio/new_message.WAV');
+
+        // Функция для получения новых заявок
         const fetchOrders = async () => {
-            const response = await fetch(`${apiUrl}/check_reg/`);
+            console.log('OP')
+            const params = lastChecked ? { last_checked: lastChecked } : {};
+            const response = await fetch(`${apiUrl}/check_reg/`, { method: 'GET', headers: params });
             const data = await response.json();
-            // setOrders(data);
             setAllUsers(data);
-            if (data.length <= orders.length) {
-                console.log('Новых заявок на регистрацию нет');
-                return;
-            } else {
-                if ((data.length - orders.length) === 1) {
-                    console.log('Новая заявка на регистрацию');
-                    const lastMessage = data[data.length - 1];
-                    setOrders(data);
-                    const params = {
-                        direction: ['taxi'], // Направления регистрации
-                        search: lastMessage.phone,     // Поиск по ФИО и телефону
-                        status: ['draft', 'not_filled', 'not_processed', 'exchange_error', 'filled'],  // Статусы заявок
-                        page: 1,                            // Текущая страница
-                        per_page: '20',                     // Количество элементов на странице
-                        order: '-date'                      // Сортировка по дате создания (по убыванию)
-                      };
-                    
-                    const headers = {
-                        'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1' // заголовок с клиентским ключом
-                      };
-        
-                    const response_jump = await axios.get(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications`, {params, headers});
-                    console.log(response_jump.data)
-                    if (response_jump.data.items.length=== 1) {
-                        setNewOrders(lastMessage);
-                        setNotificationSent({orders: false});
-                        toast('Новая заявка на регистрацию!');
-                        audio.play();
-                        console.log(response);
-                    }
-                } else {
-                    setOrders(data);
-                    return
+            console.log(data.length, orders.length)
+            if (data.length > orders.length) {
+                console.log('Новая заявка на регистрацию');
+                const lastMessage = data[data.length - 1];
+                setOrders(data);
+                if (lastMessage.role_name === 'partner') {
+                    setNewOrders(lastMessage);
+                    setNotificationSent((prev) => ({ ...prev, orders: false }));
+                    toast('Новая заявка на регистрацию от партнёра!');
+                    audio.play();
+                } else if (lastMessage.role_name === 'driver') {
+                const params = {
+                    direction: ['taxi'],
+                    search: lastMessage.phone,
+                    status: ['draft', 'not_filled', 'not_processed', 'exchange_error', 'filled'],
+                    page: 1,
+                    per_page: '20',
+                    order: '-date'
+                };
+                const headers = { 'Client-Key': '4cf38a3d-abd3-4007-8e02-6cdc93c329a1' };
+                const response_jump = await axios.get(`https://v2.jump.taxi/taxi-public/v1/autoreg/applications`, {params, headers});
+                
+                if (response_jump.data.items.length === 1) {
+                    setNewOrders(lastMessage);
+                    setNotificationSent((prev) => ({...prev, orders: false}));
+                    toast('Новая заявка на регистрацию от водителя!');
+                    audio.play();
                 }
-        }
+                } 
+            }
+
+            // Обновляем метку времени последнего запроса
+            setLastChecked(new Date().toISOString());
         };
 
+        // Функция для получения новых сообщений
         const fetchMessages = async () => {
-            console.log('fetchMessages');
-            const response = await fetch(`${apiUrl}/messages/poll/`);
+            const params = lastChecked ? { last_checked: lastChecked } : {}; // Если есть lastChecked, передаем его
+            const response = await fetch(`${apiUrl}/messages/poll/`, { method: 'GET', headers: params });
             const data = await response.json();
-            if (data.length <= messages.length) {
-                setMessages(data);
-                return
-            }
-            else {
-                setMessages(data);
-                if (data.filter((message) => message.role === 'orders').length > 0) {
-                    const item = data.filter((message) => message.role === 'orders');
-                    setNewMessages(item);
-                    setNotificationSent({messages: false});
+            setMessages(data);
+
+            // Уведомление при появлении новых сообщений
+            if (data.length > messages.length) {
+                const newOrderMessages = data.filter((message) => message.role === 'orders');
+                const newAppealMessages = data.filter((message) => message.role === 'appeal');
+                const newHelpMessages = data.filter((message) => message.role === 'help');
+
+                if (newOrderMessages.length > 0) {
+                    setNewMessages(newOrderMessages);
+                    setNotificationSent((prev) => ({...prev, messages: false}));
                     toast('Новая заявка!');
                     audio.play();
-                }
-                else if (data.filter((message) => message.role === 'appeal').length > 0) {
-                    const item = data.filter((message) => message.role === 'appeal');
-                    setNewMessages(item);
-                    setNotificationSent({messages: false});
+                } else if (newAppealMessages.length > 0) {
+                    setNewMessages(newAppealMessages);
+                    setNotificationSent((prev) => ({...prev, messages: false}));
                     toast('Новое обращение!');
                     audio.play();
-                }
-                else if (data.filter((message) => message.role === 'help').length > 0) {
-                    const item = data.filter((message) => message.role === 'help');
-                    setNewMessages(item);
-                    setNotificationSent({messages: false});
+                } else if (newHelpMessages.length > 0) {
+                    setNewMessages(newHelpMessages);
+                    setNotificationSent((prev) => ({...prev, messages: false}));
                     toast('Нужна помощь!');
                     audio.play();
                 }
-                return
             }
+
+            // Обновляем метку времени последнего запроса
+            setLastChecked(new Date().toISOString());
         };
 
-        let fetchOrdersInterval;
+        // Устанавливаем интервалы для периодического получения данных
+        const fetchMessagesInterval = setInterval(fetchMessages, 5000);
+        const fetchOrdersInterval = setInterval(fetchOrders, 5000);
 
-        const fetchMessagesInterval = setInterval(() => {
-            fetchMessages();
-        }, 5000);
-    
-        const fetchOrdersTimeout = setTimeout(() => {
-            fetchOrders();
-            fetchOrdersInterval = setInterval(fetchOrders, 5000);
-        }, 1000);
-    
+        // Чистим интервалы при размонтировании компонента
         return () => {
             clearInterval(fetchMessagesInterval);
-            clearTimeout(fetchOrdersTimeout);
             clearInterval(fetchOrdersInterval);
         };
-    }, [newMessages, newOrders]);
-
-    useEffect(() => {
-        if (newOrders && !notificationSent.orders) {;
-            setNotificationSent((prev) => ({...prev, orders: true}));
-        } else {
-            return;
-        }
-    }, [newOrders, notificationSent]);
-
-    useEffect(() => {
-        if (newMessages && !notificationSent.messages) {
-            setNotificationSent((prev) => ({...prev, messages: true}));
-        } else {
-            return;
-        }
-    }, [newMessages,notificationSent]);
+    }, [orders, messages, lastChecked]);
 
     function handleViewClick(view) {
         setSelectView(view);

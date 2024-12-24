@@ -184,6 +184,7 @@ export default function Referalkeys() {
                         <span className="table_keys_right">{elem.key}</span>
                         <button className="btn_redact" onClick={() => handleEditClick(elem)}>Ред.</button>
                         <button className="btn_del" onClick={() => deleteRefKey(elem.id)}>Удалить</button>
+                        <div className="circle_count">{elem.count_invite}</div>
                     </div>
                 ))}
             </div>

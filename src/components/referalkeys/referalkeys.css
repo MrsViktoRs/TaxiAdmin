@@ -78,6 +78,28 @@
     .table_keys_left, .table_keys_right {
         background: var(--Color-3, #FCFCFC);
     }
+    .circle_count {
+        display: flex;
+    }
+}
+
+.circle_count {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+    width: 35px;
+    height: 45px;
+    background-color: #506365;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border: none;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: default;
+    z-index: 10;
 }
 
 #row_bottom {

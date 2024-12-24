@@ -51,7 +51,6 @@ export default function Orders ({ orders }) {
             setError(err);
             console.log(error);
         }
-
     }
 
     const handleClickPartner = async (id) => {
