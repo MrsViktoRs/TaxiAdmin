@@ -17,7 +17,6 @@ function App() {
 
   const handleLogIn = async () => {
     try {
-      console.log(regData);
       const response = await axios.post(`${apiUrl}/login/`, {regData});
       localStorage.setItem('isLoggedIn', 'true');
       setIsLogIn(true);
