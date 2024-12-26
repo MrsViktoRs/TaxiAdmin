@@ -1,0 +1,167 @@
+.modalPartner {
+    position: absolute;
+    display: flex;
+    width: 500px;
+    height: 600px;
+    background-color: #fff;
+    z-index: 10;
+    border-radius: 20px;
+    margin-left: 25%;
+    border: 1px solid #ccc;
+    flex-direction: column;
+}
+
+.dataPartner {
+    position: relative;
+    display: flex;
+    width: 90%;
+    height: 500px;
+    margin: 30px;
+    flex-direction: column;
+    font-size: 18px;
+}
+
+.tgLinkPartner {
+    width: 90%;
+    height: 20px;
+    display: inline-flex;
+    margin-top: -20px;
+    margin-left: auto;
+    margin-right: 5px;
+    justify-content: end;
+    margin-bottom: 10px;
+    
+}
+
+.tgLinkPartner:hover {
+    text-decoration: underline;
+}
+
+.nameParnter {
+    position: relative;
+    width: 100%;
+    display: inline-flex;
+    margin-top: 15px;
+    align-items: center;
+    align-content: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ccc;
+}
+
+.nameParnter input {
+    width: 200px;
+    margin-left: auto;
+    margin-right: 80px;
+    padding-left: 10px;
+    height: 30px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+}
+
+.surnameParnter {
+    position: relative;
+    width: 100%;
+    display: inline-flex;
+    margin-top: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #ccc;
+}
+
+.surnameParnter input {
+    width: 200px;
+    margin-left: auto;
+    margin-right: 80px;
+    padding-left: 10px;
+    height: 30px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+}
+
+.patronymicParnter {
+    position: relative;
+    width: 100%;
+    display: inline-flex;
+    margin-top: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #ccc;
+}
+
+.patronymicParnter input {
+    width: 200px;
+    margin-left: auto;
+    margin-right: 80px;
+    padding-left: 10px;
+    height: 30px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+}
+
+.phoneParnter {
+    position: relative;
+    width: 100%;
+    display: inline-flex;
+    margin-top: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #ccc;
+
+}
+
+.phoneParnter input {
+    width: 200px;
+    margin-left: auto;
+    margin-right: 80px;
+    padding-left: 10px;
+    height: 30px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+}
+
+.cardNumberParnter {
+    position: relative;
+    width: 100%;
+    display: inline-flex;
+    margin-top: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #ccc;
+}
+
+.cardNumberParnter textarea {
+    width: 275px;
+    margin-left: auto;
+    padding-left: 10px;
+    padding-right: 5px;
+    padding-top: 5px;
+    height: 90px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    resize: none;
+}
+
+.partnerButtons {
+    width: 96%;
+    height: 70px;
+    display: flex;
+    justify-content: end;
+}
+
+.btnsParnter {
+    width: 100px;
+    height: 50px;
+    font-size: 16px;
+    margin-right: 10px;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    background: #7A9E9F;
+    cursor: pointer;
+}
+
+#closePartner {
+    margin-right: -10px;
+    background: #FE5F55;
+}

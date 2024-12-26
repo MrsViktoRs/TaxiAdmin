@@ -27,7 +27,6 @@ function App() {
   }
 
   const logOut = () => {
-    console.log('logout');
     localStorage.removeItem('isLoggedIn');
     setIsLogIn(false);
   }

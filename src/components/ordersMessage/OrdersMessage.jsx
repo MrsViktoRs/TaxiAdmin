@@ -124,7 +124,8 @@ export default function OrdersMessage({ messages }) {
             return (
                 <div className="modalUser">
                     <span className="modalHead">
-                        <span className="modalRelated">{selectMess.user.address}</span>
+                        <span className="modalRelated">http://t.me/@{selectMess.user.chat_id}</span>
+                        <span className="userPhoneMumber">{selectMess.user.phone}</span>
                         <span className="modalDate">{selectMess.formatted_dt}</span>
                         <span className="modalAction">
                             <button className="modalCloseBtn" onClick={() => {handleCloseModal()}}>Вернуться</button>
@@ -142,7 +143,8 @@ export default function OrdersMessage({ messages }) {
             return (
                 <div className="modalUser">
                     <span className="modalHead">
-                        <span className="modalRelated">{selectMess.user.address}</span>
+                        <span className="modalRelated">http://t.me/@{selectMess.user.chat_id}</span>
+                        <span className="userPhoneMumber">{selectMess.user.phone}</span>
                         <span className="modalDate">{selectMess.formatted_dt}</span>
                         <span className="modalAction">
                             <button className="modalCloseBtn" onClick={() => {handleCloseModalHistory()}}>Вернуться</button>

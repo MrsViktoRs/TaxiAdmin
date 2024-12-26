@@ -17,10 +17,10 @@ export default function Authorization({ logIn, regData, setRegData }) {
     }
 
     const handleChange = (e) => {
-        setRegData({
-            ...regData,
+        setRegData((prev) => ({
+            ...prev,
             [e.target.name]: e.target.value
-        });
+        }));
     }
 
     const handleClickValidate = async () => {
@@ -28,12 +28,9 @@ export default function Authorization({ logIn, regData, setRegData }) {
         if (regData.invite === inviteReg) {
             setIsRegister(false);
             try {
-                console.log(regData, '2');
                 const response = await axios.post(`${apiUrl}/create_user/`, regData);
-                // Добавьте обработку успешного ответа здесь, если необходимо
             } catch (error) {
                 if (error.response) {
-                    // Обработка ошибки с ответом от сервера
                     switch (error.response.status) {
                         case 400:
                             toast.error('Неверный логин или пароль');
@@ -46,7 +43,6 @@ export default function Authorization({ logIn, regData, setRegData }) {
                             break;
                     }
                 } else {
-                    // Обработка других ошибок
                     toast.error('Произошла ошибка');
                 }
             } finally {
@@ -55,7 +51,6 @@ export default function Authorization({ logIn, regData, setRegData }) {
                     ...regData,
                     invite: '',
                 });
-                console.log(regData, '3');
             }
         } else {
             toast.error('Неверный код приглашения');
@@ -84,15 +79,15 @@ export default function Authorization({ logIn, regData, setRegData }) {
                 <>
                     <div className="form_group_login">
                         <label className="form_label_login">Логин</label>
-                        <input className="form_input_login" type="text" name="username" onChange={handleChange}></input>
+                        <input className="form_input_login" type="text" name="username" onChange={handleChange} value={regData.username || ''}></input>
                     </div>
                     <div className="form_group_pass">
                         <label className="form_label_pass">Пароль</label>
-                        <input className="form_input_pass" type="password" name="password" onChange={handleChange}></input >
+                        <input className="form_input_pass" type="password" name="password" onChange={handleChange} value={regData.password || ''}></input>
                     </div>
                     <div className="form_group_invite">
                         <label className="form_label_invite">Код приглашения</label>
-                        <input type="text"  className="form_input_invite" name="invite" onChange={handleChange}/>
+                        <input type="text"  className="form_input_invite" name="invite" onChange={handleChange} value={regData.invite || ''}/>
                     </div>
                     <div>
                         <button className="form_button_reg" onClick={handleClickValidate}>Зарегистрироваться</button>
@@ -107,11 +102,11 @@ export default function Authorization({ logIn, regData, setRegData }) {
                 <>
                     <div className="form_group_login">
                         <label className="form_label_login">Логин</label>
-                        <input className="form_input_login" type="text"></input>
+                        <input className="form_input_login" type="text" name="username" onChange={handleChange} value={regData.username || ''}></input>
                     </div>
                     <div className="form_group_pass">
                         <label className="form_label_pass">Пароль</label>
-                        <input className="form_input_pass" type="password"></input >
+                        <input className="form_input_pass" type="password" name="password" onChange={handleChange} value={regData.password || ''}></input >
                     </div>
                     <div>
                         <button className="form_button" onClick={() => {logIn()}}>Войти</button>
